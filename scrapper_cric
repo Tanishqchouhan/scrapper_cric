@@ -1,0 +1,60 @@
+from selenium import webdriver
+from bs4 import BeautifulSoup
+from bs4.dammit import EncodingDetector
+import requests
+import csv
+list1 = ['']
+for every in list1 :
+
+    link = (every)
+    driver = webdriver.Chrome('chromedriver.exe')
+    driver.get(link)
+
+    try:
+        elem = driver.find_element_by_xpath('//*[@id="full_commentary_btn"]')
+        elem.click()
+    except:
+        pass
+    lastHeight = driver.execute_script("return document.documentElement.scrollHeight")
+    print(driver.execute_script("return document.documentElement.scrollHeight"))
+    pause = 6
+
+    while True:
+        driver.execute_script("window.scrollTo(0, document.documentElement.scrollHeight);")
+        time.sleep(pause)
+        newHeight = driver.execute_script("return document.documentElement.scrollHeight")
+        if newHeight == lastHeight:
+            break
+        lastHeight = newHeight
+        height = (driver.execute_script("return document.documentElement.scrollHeight"))
+        time.sleep(pause)
+        driver.execute_script("window.scrollTo(0, " + str(height-1500) + ");")
+
+    html = driver.page_source
+    soup = BeautifulSoup(html, "html5lib")    
+    li = []
+    for aaaa in soup.find_all("p"):
+        li.append(aaaa.text)
+    print(len(li))
+    for every in li:
+        try:
+            a = every.split(',', 2)
+
+            to  = a[0]
+            run = a[1]
+            comments = a[2]
+        except:
+            pass
+
+
+
+        with open('results.csv','a',encoding='utf-8',newline='') as f:
+            if len(run) <=10:
+                head=['to','run','comments']
+                writer=csv.DictWriter(f,fieldnames=head)
+
+
+                writer.writerow({'to':to,'run':run,'comments':comments})
+
+            continue
+
